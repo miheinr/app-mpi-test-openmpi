@@ -1,4 +1,4 @@
-FROM centos:7
+FROM rockylinux:8
 LABEL maintainer="Nimbix, Inc."
 
 WORKDIR /tmp
@@ -11,10 +11,12 @@ ARG GIT_BRANCH
 ENV GIT_BRANCH ${GIT_BRANCH:-master}
 
 # Install image-common
-RUN yum -y install epel-release file git gcc gcc-c++ make openmpi-devel openmpi3-devel && \
-    curl -H 'Cache-Control: no-cache' \
-        https://raw.githubusercontent.com/nimbix/image-common/$GIT_BRANCH/install-nimbix.sh \
-        | bash
+RUN yum -y install epel-release file git gcc gcc-c++ make openmpi-devel
+COPY install-nimbix.sh /tmp
+RUN /tmp/install-nimbix.sh && rm -f /tmp/install-nimbix.sh
+#    curl -H 'Cache-Control: no-cache' \
+#        https://raw.githubusercontent.com/nimbix/image-common/$GIT_BRANCH/install-nimbix.sh \
+#        | bash
 
 # Install mpi-common to pick up tools
 RUN curl -H 'Cache-Control: no-cache' \
